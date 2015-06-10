@@ -390,6 +390,9 @@ def update_solr(buid, download=True, force=True, set_title=False,
                          (buid, list(solr_del_uids)))
             conn.delete(q=delete_chunk)
 
+    # Delete jobs that don't have UIDs, on the basis that they are from a etl_to_solr import, not this task.
+    conn.delete(q='buid:%s AND -uid:* AND -is_posted:true' % buid) 
+
     #Update business unit information: title, dates, and associated_jobs
     if set_title or not bu.title or (bu.title != jobfeed.job_source_name and
                                      jobfeed.job_source_name):

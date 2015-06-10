@@ -148,6 +148,18 @@ class ImportJobsTestCase(DirectSEOBase):
             ids = [d['id'] for d in self.solr.search('*:*').docs]
             self.assertTrue([5, 6, 7, 8, 9, 10] not in ids)
 
+    def test_remove_jobs_from_etl(self):
+        etl_jobs = [{'id': 'seo.%s' % i, 'buid': self.buid_id} for i in range(2, 10)]
+        self.solr.add(etl_jobs)
+        self.solr.commit()
+        
+        update_solr(self.buid_id)
+        
+        etl_ids = set([d['id'] for d in etl_jobs])
+        ids = set([d['id'] for d in self.solr.search('*:*').docs])
+        self.assertGreater(len(ids), 0, "No jobs were found for the business unit.")
+        self.assertTrue(len(etl_ids & ids) == 0, "Jobs without uids are not being removed.")
+
 
 class LoadETLTestCase(DirectSEOBase):
     def setUp(self):
