@@ -158,7 +158,7 @@ class ImportJobsTestCase(DirectSEOBase):
         etl_ids = set([d['id'] for d in etl_jobs])
         ids = set([d['id'] for d in self.solr.search('*:*').docs])
         self.assertGreater(len(ids), 0, "No jobs were found for the business unit.")
-        self.assertTrue(len(etl_ids & ids) == 0, "Jobs without uids are not being removed.")
+        self.assertEqual(len(etl_ids & ids), 0, "Jobs without uids are not being removed.")
 
 
 class LoadETLTestCase(DirectSEOBase):
